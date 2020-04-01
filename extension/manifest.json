@@ -1,0 +1,16 @@
+{
+    "name": "Getting Started Example",
+    "version": "1.0",
+    "description": "Build an Extension!",
+	"permissions": [
+		"activeTab"
+	],
+	"content_scripts": [
+		{
+		  "matches": ["https://www.netflix.com/watch/*", "https://www.youtube.com/watch?v=*"],
+		  "run_at": "document_idle",
+		  "js": ["socket.io.js", "app.js", "connect.js" ]
+		}
+	],
+    "manifest_version": 2
+  }
