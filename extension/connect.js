@@ -5,7 +5,7 @@ console.log("connect.js is here")
 const serverLocation = "http://localhost:8787"
 
 //Some global variables
-var allowControl, socket, hash, controller = null
+var allowControl, socket, hash, connected = false, controller = null
 
 if (location.hash) {
 
@@ -15,8 +15,8 @@ if (location.hash) {
 
 }
 
-else
-	waitForPlayer().then(() => startRoom(true, getPlayerState()))
+/* else
+	waitForPlayer().then(() => startRoom(true, getPlayerState())) */
 
 
 function joinRoom(hash) {
@@ -29,8 +29,12 @@ function joinRoom(hash) {
 		socket.emit("join", hash)
 	})
 
+	socket.on("disconnect", onDisconnect)
+
 	//start app after we joined
 	socket.on("joined", (members, controller, state) => {
+
+		connected = true
 
 		//app.js
 		if (members) {
@@ -43,6 +47,9 @@ function joinRoom(hash) {
 			console.error("Failed to join", hash)
 			location.hash = ""
 		}
+
+		//Inform the background/popup of the connection and hash
+		chrome.runtime.sendMessage({message: "status", connected, hash: null})
 
 	})
 
@@ -59,11 +66,23 @@ function startRoom(allowControl_, playerstate) {
 		socket.emit("create", allowControl, playerstate)
 	})
 
+	socket.on("disconnect", onDisconnect)
+
 	//Created room, set hash in url, start app
-	socket.on("created", hash => {
-		if (location.hostname == "www.youtube.com")
-			console.log("Share:", `${location.href}#${hash}`)
-		else location.hash = hash
+	socket.on("created", hash_ => {
+		
+		hash = hash_
+
+		connected = true
+
+		console.log("Share:", `${location.href}#${hash}`)
+		
+		//Youtube will reload if you change the hash
+		if (location.hostname != "www.youtube.com")
+			location.hash = hash
+
+		//Inform the background/popup of the connection and hash
+		chrome.runtime.sendMessage({message: "status", connected, hash: null})
 
 		//app.js
 		connectedToRoom(socket, controller, null)
@@ -112,3 +131,12 @@ function setupLogging() {
 
 }
 
+//When socket disconnects
+function onDisconnect () {
+
+	console.log("Disconnected")
+
+	connected = false
+	socket = null
+	chrome.runtime.sendMessage({message: "status", connected: false, hash})
+}

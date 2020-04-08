@@ -18,9 +18,11 @@ var actions = 0
 var ping = 0
 
 async function connectedToRoom(socket, controller) {
-	if (!player) player = document.getElementsByTagName("video")[0]
 
-	//If the player still ins't there, wait for it
+	//Create chat
+	if (window.location.hostname == "www.netflix.com")
+		injectChat()
+
 	if (!player)
 		await waitForPlayer()
 	
@@ -68,10 +70,10 @@ async function connectedToRoom(socket, controller) {
 
 	socket.on("beat", state => {
 		ping = new Date() - lastSendBeat
-		console.log("Ping:", ping)
+		//console.log("Ping:", ping)
 
 		const timediff = player.currentTime - state.time
-		console.log("Offset:", timediff)
+		//console.log("Offset:", timediff)
 	})
 
 }
@@ -101,7 +103,13 @@ function setPlayerState(state) {
 
 function waitForPlayer() {
 	return new Promise((resolve, reject) => {
+
+		//First we check if there isnt already a player on the page
 		if (player) return resolve(player)
+		else {
+			player = document.getElementsByTagName("video")[0]
+			if (player) return resolve(player)
+		}
 
 		console.log("Waiting for player")
 		const observer = new MutationObserver((mutationsList, observer) => {

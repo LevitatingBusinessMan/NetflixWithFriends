@@ -1,16 +1,25 @@
 {
-    "name": "Getting Started Example",
+    "name": "Netflix With Friends!",
     "version": "1.0",
-    "description": "Build an Extension!",
+    "description": "Watch Netflix togethers",
 	"permissions": [
-		"activeTab"
+		"activeTab",
+		"storage",
+		"declarativeContent"
 	],
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": false
+	},
 	"content_scripts": [
 		{
-		  "matches": ["https://www.netflix.com/watch/*", "https://www.youtube.com/watch?v=*"],
+		  "matches": ["https://www.netflix.com/*", "https://www.youtube.com/watch?v=*"],
 		  "run_at": "document_idle",
-		  "js": ["socket.io.js", "app.js", "connect.js" ]
+		  "js": ["socket.io.js", "chat.js", "app.js", "connect.js", "listener.js"]
 		}
 	],
-    "manifest_version": 2
-  }
+	"page_action": {
+		"default_popup": "popup.html"
+	},
+	"manifest_version": 2
+}
