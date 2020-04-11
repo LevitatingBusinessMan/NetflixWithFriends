@@ -35,6 +35,8 @@ io.on("connection", client => {
 
 		client.emit("created", hash)
 
+		listen()
+
 		writeStatus()
 
 	})
@@ -66,6 +68,8 @@ io.on("connection", client => {
 			//Tell all other clients
 			client.broadcast.to(hash).emit("member_join", client.id, nick, members)
 
+			listen()
+
 			writeStatus()
 		}
 		
@@ -74,41 +78,45 @@ io.on("connection", client => {
 			client.emit("joined", null)
 	})
 
-	client.on("pause", () => {
+	function listen() {
 
-		rooms[client.room].state.paused = true
-		io.to(client.room).emit("pause", client.shortId, client.nick)
+		client.on("pause", () => {
+
+			rooms[client.room].state.paused = true
+			io.to(client.room).emit("pause", client.shortId, client.nick)
+		
+		})
 	
-	})
-
-	client.on("play", () => {
-
-		rooms[client.room].state.paused = false
-		io.to(client.room).emit("play", client.shortId, client.nick)
-
-	})
+		client.on("play", () => {
 	
-	client.on("seek", newTime => {
-
-		rooms[client.room].state.time = newTime
-		io.to(client.room).emit("seek", newTime, client.shortId, client.nick)
-
-	})
-
-	client.on("chat_message", msg => {
-
-		io.to(client.room).emit("chat_message", client.shortId, client.nick, msg)
+			rooms[client.room].state.paused = false
+			io.to(client.room).emit("play", client.shortId, client.nick)
 	
-	})
+		})
+		
+		client.on("seek", newTime => {
+	
+			rooms[client.room].state.time = newTime
+			io.to(client.room).emit("seek", newTime, client.shortId, client.nick)
+	
+		})
+	
+		client.on("chat_message", msg => {
+	
+			io.to(client.room).emit("chat_message", client.shortId, client.nick, msg)
+		
+		})
+	
+		client.on("change_nickname", nickname => {
+	
+			io.to(client.room).emit("nick_change", client.shortId, client.nick, nickname)
+			client.nick = nickname
+	
+		})
+	
+		client.on("beat", () => client.emit("beat", rooms[client.room].state))
 
-	client.on("change_nickname", nickname => {
-
-		io.to(client.room).emit("nick_change", client.shortId, client.nick, nickname)
-		client.nick = nickname
-
-	})
-
-	client.on("beat", () => client.emit("beat", rooms[client.room].state))
+	}
 
 	client.on("disconnect", () => {
 
