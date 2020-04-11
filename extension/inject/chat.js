@@ -2,7 +2,7 @@
 
 //Fetch the HTML and inject it
 function injectChat() {
-	fetch(chrome.extension.getURL('/chat.html'))
+	fetch(chrome.extension.getURL('/inject/chat.html'))
 	.then(data => data.text())
 	.then(body => {
 		const chatDiv = document.createElement("div")

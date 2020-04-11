@@ -8,21 +8,21 @@
 		"declarativeContent"
 	],
 	"background": {
-		"scripts": ["background.js"],
+		"scripts": ["background/background.js"],
 		"persistent": false
 	},
 	"content_scripts": [
 		{
 		  "matches": ["https://www.netflix.com/*", "https://www.youtube.com/watch?v=*"],
 		  "run_at": "document_idle",
-		  "js": ["socket.io.js", "chat.js", "app.js", "connect.js", "listener.js"]
+		  "js": ["inject/socket.io.js", "inject/chat.js", "inject/app.js", "inject/connect.js", "inject/listener.js"]
 		}
 	],
 	"page_action": {
-		"default_popup": "popup.html"
+		"default_popup": "popup/popup.html"
 	},
 	"web_accessible_resources": [
-        "chat.html"
+        "inject/chat.html"
     ],
 	"manifest_version": 2
 }
