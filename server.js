@@ -163,6 +163,10 @@ writeStatus(true)
 
 function writeStatus(init) {
 	
+	//For pm2
+	if (!process.stdout.moveCursor)
+		return
+
 	if (!init) {
 		process.stdout.moveCursor(0, -2)
 		process.stdout.clearScreenDown()
