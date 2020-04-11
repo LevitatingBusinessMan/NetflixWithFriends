@@ -9,7 +9,12 @@ function injectChat() {
 		chatDiv.innerHTML = body
 		chatDiv.id = "chat"
 		
-		document.body.appendChild(chatDiv)
+		if (window.location.hostname != "www.youtube.com")
+			document.getElementsByClassName("AkiraPlayer")[0].appendChild(chatDiv)
+		else {
+			document.getElementById("ytd-player").style.position = "absolute"
+			document.getElementById("ytd-player").appendChild(chatDiv)
+		}
 
 		document.getElementById("usernameInput").placeholder = nick
 
@@ -20,7 +25,7 @@ function injectChat() {
 				lastMove = new Date()
 			else {
 				visible = true
-				chatDiv.classList.toggle("hidden")
+				chatDiv.classList.toggle("hidden_")
 			}
 		}
 
@@ -28,7 +33,7 @@ function injectChat() {
 			if (visible) {
 				if (lastMove.getTime() + 3000 < new Date().getTime()) {
 					visible = false
-					chatDiv.classList.toggle("hidden")
+					chatDiv.classList.toggle("hidden_")
 				}
 			}
 		}, 100)
