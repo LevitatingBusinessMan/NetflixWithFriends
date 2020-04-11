@@ -3,3 +3,5 @@ add header with members amount
 enter to send message
 allowControl
 fix popup frontend
+get a popup on message
+get a list of connected people shown in the chatWindow

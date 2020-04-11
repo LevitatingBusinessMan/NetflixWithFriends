@@ -12,11 +12,13 @@ function injectChat() {
 		if (window.location.hostname != "www.youtube.com")
 			document.getElementsByClassName("AkiraPlayer")[0].appendChild(chatDiv)
 		else {
-			document.getElementById("ytd-player").style.position = "absolute"
+			document.querySelector("#container.ytd-player").style.position = "absolute"
 			document.getElementById("ytd-player").appendChild(chatDiv)
 		}
 
 		document.getElementById("usernameInput").placeholder = nick
+		document.getElementById("shareURL").value = location.origin + location.pathname + "#" + hash
+
 
 		let lastMove = new Date()
 		let visible = true

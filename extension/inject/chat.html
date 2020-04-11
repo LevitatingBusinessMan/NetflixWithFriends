@@ -1,8 +1,15 @@
+<div id="shareDiv">
+	<h3>Share:</h3>
+	<input id="shareURL" readonly/>
+</div>
+
 <div id="usernameDiv">
-	<h3>Change username:</h1>
+	<h3>Change username:</h3>
 	<input id="usernameInput"/>
 	<button id="usernameButton">change</button>
 </div>
+
+<!-- <span id="clientList"></span> -->
 
 <ul id="messageList">
 </ul>
@@ -11,7 +18,19 @@
 	<button id="sendButton">SEND</button>	
 </div>
 
+<div id="notificationTray">
+	<div class="notification">TEST</div>
+</div>
+
 <style>
+
+	#notificationTray {
+		display: none;
+		position: absolute;
+		bottom: 0;
+		right: 5%;
+	}
+
 	div#chat {
 		color: #fff;
 		box-sizing: border-box;
@@ -28,6 +47,10 @@
 		font-size: 14px;
 		transition: opacity .8s;
 		opacity: 1;
+	}
+
+	span#clientList{
+		height: 5%;
 	}
 
 	div#chat.hidden_ {
@@ -49,11 +72,12 @@
 		font-size: 14px;
 		width: 70px;
 		border-radius: 5px;
+		cursor: pointer;
 	}
 
 	ul#messageList {
 		list-style-type: none;
-		height: 80%;
+		height: 70%;
 		display: flex;
     	flex-direction: column-reverse;
 		overflow-y: auto;
@@ -67,7 +91,7 @@
 
 	li.event {
 		text-align: center;
-		padding: 10px 0 10px 0;
+		padding: 5px 0 5px 0;
 	}
 
 	li.event span {
@@ -91,6 +115,14 @@
 
 	#usernameDiv h3 {
 		padding-bottom: 3px;
+	}
+
+	#shareDiv {
+		height: 10%;
+	}
+
+	#shareDiv input {
+		width: 100%;
 	}
 
 	li.message span.title {

@@ -5,7 +5,7 @@ console.log("connect.js is here")
 const serverLocation = "http://localhost:8787"
 
 //Some global variables
-var socket, hash, connected = false, controller = null, nick = "Guest"
+var socket, hash, connected = false, controller = null, nick = "Guest", others = {}
 
 //Request nickname from localstorage
 chrome.runtime.sendMessage({message: "get_nick"}, response => {
