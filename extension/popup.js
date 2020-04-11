@@ -18,6 +18,10 @@ disconnectButton.onclick = () => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.message == "status") {
+		
+		if (startButton.disabled)
+			startButton.disabled = false
+
 		if (request.connected) {
 			url.value = sender.url + "#" + request.hash
 			connectedDiv.style.display = "block"
@@ -26,6 +30,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			notConnectedDiv.style.display = "block"
 			connectedDiv.style.display = "none"
 		}
+
 	}
 })
 
