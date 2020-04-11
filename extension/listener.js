@@ -11,6 +11,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 	//popup opened
 	if (request.message == "open") {
+
 		console.log("Sendig popup current connection state")
 		
 		chrome.runtime.sendMessage({message: "status", connected, hash})

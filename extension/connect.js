@@ -5,13 +5,13 @@ console.log("connect.js is here")
 const serverLocation = "http://localhost:8787"
 
 //Some global variables
-var allowControl, socket, hash, connected = false, controller = null
+var socket, hash, connected = false, controller = null, nick = "Guest"
 
 if (location.hash) {
 
 	hash = location.hash.substring(1)
 	console.log("Hash:", hash)
-	joinRoom(hash)
+	joinRoom(nick, hash)
 
 }
 
@@ -19,14 +19,14 @@ if (location.hash) {
 	waitForPlayer().then(() => startRoom(true, getPlayerState())) */
 
 
-function joinRoom(hash) {
+function joinRoom(nick , hash) {
 
 	socket = io.connect(serverLocation);
 	setupLogging()
 
 	//Join room
 	socket.on("connect", () => {
-		socket.emit("join", hash)
+		socket.emit("join", nick, hash)
 	})
 
 	socket.on("disconnect", onDisconnect)
@@ -34,22 +34,22 @@ function joinRoom(hash) {
 	//start app after we joined
 	socket.on("joined", (members, controller, state) => {
 
-		connected = true
-
 		//app.js
 		if (members) {
+			connected = true
 			setPlayerState(state)
 			connectedToRoom(socket, controller, state)
+			//Inform the background/popup of the connection and hash
+			chrome.runtime.sendMessage({message: "status", connected, hash})
 		}
 
 		//Empty room
 		else {
 			console.error("Failed to join", hash)
-			location.hash = ""
+			if (location.hostname != "www.youtube.com")
+				location.hash = ""
+			socket.disconnect()
 		}
-
-		//Inform the background/popup of the connection and hash
-		chrome.runtime.sendMessage({message: "status", connected, hash: null})
 
 	})
 
@@ -63,7 +63,7 @@ function startRoom(allowControl_, playerstate) {
 	setupLogging()
 
 	socket.on("connect", () => {
-		socket.emit("create", allowControl, playerstate)
+		socket.emit("create", nick, allowControl, playerstate)
 	})
 
 	socket.on("disconnect", onDisconnect)
@@ -82,7 +82,7 @@ function startRoom(allowControl_, playerstate) {
 			location.hash = hash
 
 		//Inform the background/popup of the connection and hash
-		chrome.runtime.sendMessage({message: "status", connected, hash: null})
+		chrome.runtime.sendMessage({message: "status", connected, hash})
 
 		//app.js
 		connectedToRoom(socket, controller, null)
@@ -114,7 +114,7 @@ function setupLogging() {
 	})
 
 	//Other user joined room
-	socket.on("member_join", (id, count) => {
+	socket.on("member_join", (id, nick, count) => {
 		console.group("Member joined")
 		console.log("ID:", id)
 		console.log("Total members:", count)
@@ -122,7 +122,7 @@ function setupLogging() {
 	})
 
 	//Other user left room
-	socket.on("member_leave", (id, count) => {
+	socket.on("member_leave", (id, nick, count) => {
 		console.group("Member left")
 		console.log("ID:", id)
 		console.log("Total members:", count)
@@ -139,4 +139,8 @@ function onDisconnect () {
 	connected = false
 	socket = null
 	chrome.runtime.sendMessage({message: "status", connected: false, hash})
+
+	//chat.js
+	deleteChat()
+
 }

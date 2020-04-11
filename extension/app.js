@@ -20,7 +20,7 @@ var ping = 0
 async function connectedToRoom(socket, controller) {
 
 	//Create chat
-	if (window.location.hostname == "www.netflix.com")
+	//if (window.location.hostname == "www.netflix.com")
 		injectChat()
 
 	if (!player)
@@ -47,15 +47,23 @@ async function connectedToRoom(socket, controller) {
 	
 	//player.onwaiting = () => socket.emit("buffer")
 
-	socket.on("pause", () => {
+	const myID = socket.id.substr(0,5)
+	
+	socket.on("pause", shortID => {
+		if (shortID == myID)
+			return
 		actions++; player.pause()
 	})
 
-	socket.on("play", () => {
+	socket.on("play", shortID => {
+		if (shortID == myID)
+			return
 		actions++; player.play()
 	})
 
-	socket.on("seek", time => {
+	socket.on("seek", (time, shortID) => {
+		if (shortID == myID)
+			return
 		actions++; player.currentTime = time
 	})
 

@@ -1,0 +1,122 @@
+<div id="usernameDiv">
+	<h3>Change username:</h1>
+	<input id="usernameInput"/>
+	<button id="usernameButton">change</button>
+</div>
+
+<ul id="messageList">
+</ul>
+<div id="sendDiv">
+	<input id="chatInput" placeholder="Write message"/>
+	<button id="sendButton">SEND</button>	
+</div>
+
+<style>
+	div#chat {
+		color: #fff;
+		box-sizing: border-box;
+		position: absolute;
+		width: 400px;
+		right: 0;
+		height: 60%;
+		z-index: 1;
+		margin: 5%;
+		padding: 30px;
+		background-color: rgba(0,0,0,0.8);
+		border-radius: 10px;
+		box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.5);
+		font-size: 14px;
+		transition: opacity 1s;
+		opacity: 1;
+	}
+
+	div#chat.hidden {
+		opacity: 0;
+	}
+
+	h3 {
+		margin: 0;
+	}
+
+	div#chat button {
+		float: right;
+		background-color: grey;
+		border: none;
+		width: 50px;
+		background-color: #fff;
+		text-transform: uppercase;
+		color: #000;
+		font-size: 14px;
+		width: 70px;
+		border-radius: 5px;
+	}
+
+	ul#messageList {
+		list-style-type: none;
+		height: 80%;
+		display: flex;
+    	flex-direction: column-reverse;
+		overflow-y: auto;
+		padding: 0;
+		margin: 5% 0 5% 0;
+	}
+	
+	li.message span {
+		display: block;
+	}
+
+	li.event {
+		text-align: center;
+		padding: 10px 0 10px 0;
+	}
+
+	li.event span {
+		padding-right: 4px;
+	}
+
+	li.message {
+		padding: 5px 0 5px 0;
+	}
+
+	div#chat input {
+		background: transparent;
+		border: none;
+		outline: none;
+		color: #fff;
+	}
+
+	div#chat input::placeholder {
+    	color: #fff;
+	}
+
+	#usernameDiv h3 {
+		padding-bottom: 3px;
+	}
+
+	li.message span.title {
+		font-weight: bold;
+		color: #E50914;
+	}
+
+	li.message span.content {
+		padding-left: 8px;
+	}
+
+	div#usernameDiv {
+		height: 10%;
+	}
+
+	div#sendDiv {
+		height: 5%;
+	}
+
+	ul#messageList::-webkit-scrollbar {
+		width: 7px;
+	}
+
+	ul#messageList::-webkit-scrollbar-thumb {
+		background: #fff;
+		border-radius: 10px;
+	}
+
+</style>
