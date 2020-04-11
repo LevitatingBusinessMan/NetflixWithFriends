@@ -94,6 +94,7 @@ function changeNickname() {
 	nick = nickname
 
 	socket.emit("change_nickname", nickname)
+	chrome.runtime.sendMessage({message: "set_nick", nick: nickname})
 
 }
 

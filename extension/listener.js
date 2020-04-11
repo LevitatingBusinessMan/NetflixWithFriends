@@ -2,6 +2,9 @@
 
 console.log("listener.js is here")
 
+//Initial message may the popup be open
+chrome.runtime.sendMessage({message: "status", connected, hash})
+
 //Start room message from popup.html
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.message == "startRoom") {

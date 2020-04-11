@@ -1,5 +1,6 @@
-//Pretty much just handles opening the popup
+//Pretty much just handles opening the popup and storage
 
+//popup
 chrome.runtime.onInstalled.addListener(() => {
 	chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
 		chrome.declarativeContent.onPageChanged.addRules(
@@ -21,15 +22,20 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 
-/* chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.message == "status") {
-		if (request.connected) {
-			url.value = sender.url + "#" + request.hash
-			connectedDiv.style.display = "block"
-			notConnectedDiv.style.display = "none"
-		} else {
-			notConnectedDiv.style.display = "block"
-			connectedDiv.style.display = "none"
-		}
+//storage
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	switch (request.message) {
+		case "get_nick":
+			chrome.storage.sync.get(['nickname'], result => {
+				sendResponse({nick: result.nickname})
+				console.log(result.nickname)
+			})
+
+			//https://stackoverflow.com/a/56483156/8935250
+			return true
+
+			break
+		case "set_nick":
+			chrome.storage.sync.set({nickname: request.nick})
 	}
-}) */
+})

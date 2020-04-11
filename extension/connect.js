@@ -7,6 +7,14 @@ const serverLocation = "http://localhost:8787"
 //Some global variables
 var socket, hash, connected = false, controller = null, nick = "Guest"
 
+//Request nickname from localstorage
+chrome.runtime.sendMessage({message: "get_nick"}, response => {
+	if (response.nick) {
+		nick = response.nick
+		console.log("Found nick:", nick)
+	}
+})
+
 if (location.hash) {
 
 	hash = location.hash.substring(1)
@@ -45,7 +53,7 @@ function joinRoom(nick , hash) {
 
 		//Empty room
 		else {
-			console.error("Failed to join", hash)
+			console.log("Failed to join", hash)
 			if (location.hostname != "www.youtube.com")
 				location.hash = ""
 			socket.disconnect()
