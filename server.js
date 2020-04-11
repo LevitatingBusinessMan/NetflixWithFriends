@@ -1,16 +1,17 @@
-//Soon rewrite to not log stuff, but draft the amount of living rooms
-
 const io = require("socket.io")()
 const port = 8787
 
 const rooms = {}
+let users = 0
 
 io.on("connection", client => {
 
+	users++
+
 	//Room create
 	client.on("create", (nick, allowControl, state) => {
+
 		const hash = Math.random().toString(36).substring(7)
-		console.log("Created room", hash)
 		
 		client.shortId = client.id.substr(0,5)
 
@@ -26,8 +27,6 @@ io.on("connection", client => {
 
 		rooms[hash].state = state
 
-		//console.log(rooms[hash])
-
 		//Identify this client as controller
 		if (!allowControl) {
 			client.controller = true
@@ -35,6 +34,9 @@ io.on("connection", client => {
 		}
 
 		client.emit("created", hash)
+
+		writeStatus()
+
 	})
 
 	//Client wants to join room
@@ -42,8 +44,6 @@ io.on("connection", client => {
 		//Check if room exists
 		if (io.sockets.adapter.rooms[hash]) {
 			
-			console.log("Client joined", hash)
-
 			client.shortId = client.id.substr(0,5)
 
 			if (nick)
@@ -65,59 +65,60 @@ io.on("connection", client => {
 
 			//Tell all other clients
 			client.broadcast.to(hash).emit("member_join", client.id, nick, members)
+
+			writeStatus()
 		}
 		
 		//Room doesnt exist
-		else {
-			console.log("Client tried joining empty room", hash)
+		else
 			client.emit("joined", null)
-		}
 	})
 
 	client.on("pause", () => {
+
 		rooms[client.room].state.paused = true
-
-		console.log(`${client.shortId} paused (Room: ${client.room})`)
-
 		io.to(client.room).emit("pause", client.shortId, client.nick)
+	
 	})
 
 	client.on("play", () => {
+
 		rooms[client.room].state.paused = false
-
-		console.log(`${client.shortId} resumed (Room: ${client.room})`)
-
 		io.to(client.room).emit("play", client.shortId, client.nick)
+
 	})
 	
 	client.on("seek", newTime => {
+
 		rooms[client.room].state.time = newTime
-
-		console.log(`${client.shortId} seeked (Room: ${client.room})`)
-
 		io.to(client.room).emit("seek", newTime, client.shortId, client.nick)
+
 	})
 
 	client.on("chat_message", msg => {
-		console.log("Received message from", client.id)
+
 		io.to(client.room).emit("chat_message", client.shortId, client.nick, msg)
+	
 	})
 
 	client.on("change_nickname", nickname => {
+
 		io.to(client.room).emit("nick_change", client.shortId, client.nick, nickname)
 		client.nick = nickname
+
 	})
 
 	client.on("beat", () => client.emit("beat", rooms[client.room].state))
 
 	client.on("disconnect", () => {
 
+		users--
+
 		//If client was in a room, tell room
 		if (client.room) {
 
 			//Extra check if room exists
 			if (io.sockets.adapter.rooms[client.room]) {
-				console.log("User left", client.room)
 				const members = Object.keys(io.sockets.adapter.rooms[client.room].sockets).length
 				io.to(client.room).emit("member_leave", client.id, client.nick, members)
 			}
@@ -128,6 +129,8 @@ io.on("connection", client => {
 			}
 
 		}
+
+		writeStatus()
 
 	})
 
@@ -147,3 +150,17 @@ setInterval(() => {
 
 io.listen(port)
 console.log("Signaling server on", port)
+
+writeStatus(true)
+
+function writeStatus(init) {
+	
+	if (!init) {
+		process.stdout.moveCursor(0, -2)
+		process.stdout.clearScreenDown()
+	}
+	
+	console.log("Rooms:", Object.keys(rooms).length)
+	console.log("Users:", users)
+
+}
