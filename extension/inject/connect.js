@@ -39,7 +39,7 @@ function joinRoom(nick , hash) {
 	//Join room
 	socket.on("connect", () => {
 		console.log("Connected")
-		socket.emit("join", nick, hash)
+		socket.emit("join", nick, hash, getVideoID())
 	})
 
 	socket.on("disconnect", onDisconnect)
@@ -79,7 +79,7 @@ function startRoom(allowControl_, playerstate) {
 
 	socket.on("connect", () => {
 		console.log("Connected")
-		socket.emit("create", nick, allowControl, playerstate)
+		socket.emit("create", nick, allowControl, playerstate, getVideoID())
 	})
 
 	socket.on("disconnect", onDisconnect)
@@ -105,6 +105,18 @@ function startRoom(allowControl_, playerstate) {
 
 	})
 
+}
+
+// Universal function for getting a video ID from yt or netflix
+function getVideoID() {
+	if (location.hostname == "www.youtube.com") {
+		const params = new URLSearchParams(location.search);
+		return params.get("v")
+	}
+	if (location.hostname == "www.netflix.com") {
+		const pathname = location.pathname;
+		return pathname.split("/")[2];
+	}	
 }
 
 function setupLogging() {

@@ -9,7 +9,9 @@ io.on("connection", client => {
 	users++
 
 	//Room create
-	client.on("create", (nick, allowControl, state) => {
+	client.on("create", (nick, allowControl, state, videoID) => {
+
+		console.log("Create: ", videoID);
 
 		const hash = Math.random().toString(36).substring(7)
 		
@@ -24,6 +26,8 @@ io.on("connection", client => {
 		client.room = hash
 
 		rooms[hash] = {controller: null}
+
+		rooms[hash].videoID = videoID;
 
 		rooms[hash].state = state
 
@@ -42,40 +46,42 @@ io.on("connection", client => {
 	})
 
 	//Client wants to join room
-	client.on("join", (nick, hash) => {
+	client.on("join", (nick, hash, videoID) => {
 		//Check if room exists
-		if (io.sockets.adapter.rooms[hash]) {
-			
-			client.shortId = client.id.substr(0,5)
-
-			if (nick)
-				client.nick = nick
-			else client.nick = "Guest"
-
-			//Join client
-			client.join(hash)
-			client.room = hash
-
-			const members = Object.keys(io.sockets.adapter.rooms[hash].sockets).length
-			
-			//Get controller of room if set
-			const controller = rooms[hash].controller
-			const state = rooms[hash].state
-
-			//Tell client
-			client.emit("joined", members, controller, state)
-
-			//Tell all other clients
-			client.broadcast.to(hash).emit("member_join", client.id, nick, members)
-
-			listen()
-
-			writeStatus()
-		}
+		if (!io.sockets.adapter.rooms[hash])
+			return client.emit("joined", null)
 		
-		//Room doesnt exist
-		else
-			client.emit("joined", null)
+		//Check if room was for this videoID
+		if (rooms[hash].videoID != videoID)
+			return client.emit("joined", null)
+
+
+		client.shortId = client.id.substr(0,5)
+
+		if (nick)
+			client.nick = nick
+		else client.nick = "Guest"
+
+		//Join client
+		client.join(hash)
+		client.room = hash
+
+		const members = Object.keys(io.sockets.adapter.rooms[hash].sockets).length
+		
+		//Get controller of room if set
+		const controller = rooms[hash].controller
+		const state = rooms[hash].state
+
+		//Tell client
+		client.emit("joined", members, controller, state)
+
+		//Tell all other clients
+		client.broadcast.to(hash).emit("member_join", client.id, nick, members)
+
+		listen()
+
+		writeStatus()
+					
 	})
 
 	function listen() {
@@ -163,7 +169,7 @@ writeStatus(true)
 
 function writeStatus(init) {
 	
-	//For pm2
+/* 	//For pm2
 	if (!process.stdout.moveCursor)
 		return
 
@@ -173,6 +179,6 @@ function writeStatus(init) {
 	}
 	
 	console.log("Rooms:", Object.keys(rooms).length)
-	console.log("Users:", users)
+	console.log("Users:", users) */
 
 }

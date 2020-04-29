@@ -6,6 +6,8 @@ get a popup on message
 get a list of connected people shown in the chatWindow
 disconnect on pagechange
 make room confirm id of video
+Allow video switching, (rewrite videoID stuff)
+Initial status thing from listener.js isnt functioning
 
 From test round (netflix):
 lot of .emit of not defined
