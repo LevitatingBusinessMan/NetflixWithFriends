@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 })
 
 // Ask for current state
-sendMessage({message: "open"}, handleStatus)
+sendMessage({message: "open"})
 
 const startButton = document.getElementById("startButton")
 const disconnectButton = document.getElementById("disconnectButton")

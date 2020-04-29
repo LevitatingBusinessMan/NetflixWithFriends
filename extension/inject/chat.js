@@ -9,9 +9,11 @@ function injectChat() {
 		chatDiv.innerHTML = body
 		chatDiv.id = "chat"
 		
-		if (window.location.hostname != "www.youtube.com")
+		if (window.location.hostname == "www.netflix.com") {
 			document.getElementsByClassName("AkiraPlayer")[0].appendChild(chatDiv)
-		else {
+		}
+
+		if (window.location.hostname == "www.youtube.com") {
 			document.querySelector("#container.ytd-player").style.position = "absolute"
 			document.getElementById("ytd-player").appendChild(chatDiv)
 		}
