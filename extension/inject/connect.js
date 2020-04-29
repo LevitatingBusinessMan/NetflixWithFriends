@@ -2,7 +2,7 @@
 
 console.log("connect.js is here")
 
-const serverLocation = "http://localhost:8787"
+const serverLocation = "https://syncer.reinfernhout.xyz"
 
 //Some global variables
 var socket, hash, connected = false, controller = null, nick = "Guest", others = {}
@@ -13,15 +13,17 @@ chrome.runtime.sendMessage({message: "get_nick"}, response => {
 		nick = response.nick
 		console.log("Found nick:", nick)
 	}
+
+	//After storage stuff is gained, login
+	if (location.hash) {
+
+		hash = location.hash.substring(1)
+		console.log("Hash:", hash)
+		joinRoom(nick, hash)
+	
+	}
+
 })
-
-if (location.hash) {
-
-	hash = location.hash.substring(1)
-	console.log("Hash:", hash)
-	joinRoom(nick, hash)
-
-}
 
 /* else
 	waitForPlayer().then(() => startRoom(true, getPlayerState())) */
@@ -29,11 +31,14 @@ if (location.hash) {
 
 function joinRoom(nick , hash) {
 
+	console.log("Conneting...")
+
 	socket = io.connect(serverLocation);
 	setupLogging()
 
 	//Join room
 	socket.on("connect", () => {
+		console.log("Connected")
 		socket.emit("join", nick, hash)
 	})
 
@@ -67,10 +72,13 @@ function startRoom(allowControl_, playerstate) {
 
 	allowControl = allowControl_
 
+	console.log("Conneting...")
+
 	socket = io.connect(serverLocation);
 	setupLogging()
 
 	socket.on("connect", () => {
+		console.log("Connected")
 		socket.emit("create", nick, allowControl, playerstate)
 	})
 

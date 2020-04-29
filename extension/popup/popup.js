@@ -1,4 +1,23 @@
-sendMessage({message: "open"})
+
+// Ask for current state
+sendMessage({message: "open"}, response => {
+	console.log(response);
+	if (response.message == "status") {
+		
+		if (startButton.disabled)
+			startButton.disabled = false
+
+		if (response.connected) {
+			url.value = sender.url + "#" + response.hash
+			connectedDiv.style.display = "block"
+			notConnectedDiv.style.display = "none"
+		} else {
+			notConnectedDiv.style.display = "block"
+			connectedDiv.style.display = "none"
+		}
+
+	}
+})
 
 const startButton = document.getElementById("startButton")
 const disconnectButton = document.getElementById("disconnectButton")
@@ -16,27 +35,13 @@ disconnectButton.onclick = () => {
 	sendMessage({"message": "disconnect"})
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.message == "status") {
-		
-		if (startButton.disabled)
-			startButton.disabled = false
+/* chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
-		if (request.connected) {
-			url.value = sender.url + "#" + request.hash
-			connectedDiv.style.display = "block"
-			notConnectedDiv.style.display = "none"
-		} else {
-			notConnectedDiv.style.display = "block"
-			connectedDiv.style.display = "none"
-		}
-
-	}
 })
-
-function sendMessage(msg) {
+ */
+function sendMessage(msg, callback) {
 	chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
 		const activeTab = tabs[0];
-		chrome.tabs.sendMessage(activeTab.id, msg);
+		chrome.tabs.sendMessage(activeTab.id, msg, callback);
 	});
 }

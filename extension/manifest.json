@@ -1,7 +1,7 @@
 {
     "name": "Netflix With Friends!",
     "version": "1.0",
-    "description": "Watch Netflix togethers",
+    "description": "Watch Netflix together",
 	"permissions": [
 		"activeTab",
 		"storage",

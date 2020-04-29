@@ -17,7 +17,7 @@ function injectChat() {
 		}
 
 		document.getElementById("usernameInput").placeholder = nick
-		document.getElementById("shareURL").value = location.origin + location.pathname + "#" + hash
+		document.getElementById("shareURL").value = location.origin + location.pathname + location.search + "#" + hash
 
 
 		let lastMove = new Date()
@@ -62,11 +62,11 @@ function startListening() {
 
 	socket.on("chat_message", createChatMessage)
 
-	socket.on("member_join", (id, count) => {
+	socket.on("member_join", (id, nick, members) => {
 		createEventMessage("joined the room", nick, id)
 	})
 
-	socket.on("member_leave", (id, count) => {
+	socket.on("member_leave", (id, nick, members) => {
 		createEventMessage("left the room", nick, id)
 	})
 
