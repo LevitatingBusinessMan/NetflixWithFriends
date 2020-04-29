@@ -34,9 +34,15 @@ async function connectedToRoom(socket, controller) {
 	}
 
 	player.onplay = () => {
+
+		//Make sure video didnt change
+		if (getVideoID() != videoID)
+			socket.disconnect()
+
 		if (actions < 1)
 			socket.emit("play")
 		else actions--
+
 	}
 
 	player.onseeked = () => {

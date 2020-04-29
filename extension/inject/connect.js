@@ -5,7 +5,7 @@ console.log("connect.js is here")
 const serverLocation = "https://syncer.reinfernhout.xyz"
 
 //Some global variables
-var socket, hash, connected = false, controller = null, nick = "Guest", others = {}
+var socket, hash, connected = false, controller = null, nick = "Guest", others = {}, videoID = getVideoID();
 
 //Request nickname from localstorage
 chrome.runtime.sendMessage({message: "get_nick"}, response => {
@@ -39,7 +39,7 @@ function joinRoom(nick , hash) {
 	//Join room
 	socket.on("connect", () => {
 		console.log("Connected")
-		socket.emit("join", nick, hash, getVideoID())
+		socket.emit("join", nick, hash, videoID)
 	})
 
 	socket.on("disconnect", onDisconnect)
@@ -51,7 +51,7 @@ function joinRoom(nick , hash) {
 		if (members) {
 			connected = true
 			setPlayerState(state)
-			connectedToRoom(socket, controller, state)
+			connectedToRoom(socket, controller)
 			//Inform the background/popup of the connection and hash
 			chrome.runtime.sendMessage({message: "status", connected, hash})
 		}
@@ -79,7 +79,7 @@ function startRoom(allowControl_, playerstate) {
 
 	socket.on("connect", () => {
 		console.log("Connected")
-		socket.emit("create", nick, allowControl, playerstate, getVideoID())
+		socket.emit("create", nick, allowControl, playerstate, videoID)
 	})
 
 	socket.on("disconnect", onDisconnect)
@@ -101,7 +101,7 @@ function startRoom(allowControl_, playerstate) {
 		chrome.runtime.sendMessage({message: "status", connected, hash})
 
 		//app.js
-		connectedToRoom(socket, controller, null)
+		connectedToRoom(socket, controller)
 
 	})
 
