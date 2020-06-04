@@ -109,6 +109,10 @@ io.on("connection", client => {
 	
 		client.on("chat_message", msg => {
 	
+			//Empty messages
+			if (!msg.trim().length)
+				return;
+
 			io.to(client.room).emit("chat_message", client.shortId, client.nick, msg)
 		
 		})
