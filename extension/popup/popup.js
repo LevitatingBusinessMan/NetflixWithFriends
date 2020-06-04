@@ -37,6 +37,12 @@ disconnectButton.onclick = () => {
 	sendMessage({"message": "disconnect"})
 }
 
+url.onclick = function() {
+	this.select()
+	document.execCommand('copy')
+	window.getSelection().removeAllRanges()
+}
+
 function sendMessage(msg, callback) {
 	chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
 		const activeTab = tabs[0];

@@ -16,6 +16,7 @@ We only start shooting events when it's at 0
 var actions = 0
 
 var ping = 0
+var timediff = 0
 
 async function connectedToRoom(socket, controller) {
 
@@ -75,6 +76,7 @@ async function connectedToRoom(socket, controller) {
 
 
 	let lastSendBeat
+	let timediff
 
 	//Heartbeat
 	setInterval(() => {
@@ -86,9 +88,14 @@ async function connectedToRoom(socket, controller) {
 		ping = new Date() - lastSendBeat
 		//console.log("Ping:", ping)
 
-		const timediff = player.currentTime - state.time
+		timediff = player.currentTime - state.time
 		//console.log("Offset:", timediff)
+
+		showTimeDiff(ping, timediff)
 	})
+
+	// Immediately make sure there are stats to show
+	showTimeDiff(0, 0)
 
 }
 
