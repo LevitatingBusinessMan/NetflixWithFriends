@@ -77,7 +77,7 @@ function startListening() {
 	document.getElementById("sendButton").onclick = sendChatMessage
 	document.getElementById("usernameButton").onclick = changeNickname
 
-	document.getElementById("syncButton") = syncButtonPressed
+	document.getElementById("syncButton").onclick = syncButtonPressed
 
 	socket.on("chat_message", createChatMessage)
 
@@ -216,8 +216,10 @@ function nickChange(id, old, new_) {
 }
 
 function showTimeDiff(ping, timediff) {
-	document.getElementById("timediff").innerHTML = parseFloat(timediff).toFixed(1) + "s";
-	document.getElementById("ping").innerHTML = Math.round(parseInt(ping)) + "ms";
+	if (document.getElementById("timediff"))
+		document.getElementById("timediff").innerHTML = parseFloat(timediff).toFixed(1) + "s";
+	if (document.getElementById("ping"))
+		document.getElementById("ping").innerHTML = Math.round(parseInt(ping)) + "ms";
 }
 
 function syncButtonPressed() {

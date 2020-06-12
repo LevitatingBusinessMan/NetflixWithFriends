@@ -76,7 +76,6 @@ async function connectedToRoom(socket, controller) {
 
 
 	let lastSendBeat
-	let timediff
 
 	//Heartbeat
 	setInterval(() => {
@@ -85,7 +84,7 @@ async function connectedToRoom(socket, controller) {
 	}, 2000)
 
 	socket.on("beat", state => {
-		ping = new Date() - lastSendBeat
+		ping = (new Date() - lastSendBeat) / 2
 		//console.log("Ping:", ping)
 
 		timediff = player.currentTime - state.time
@@ -97,6 +96,19 @@ async function connectedToRoom(socket, controller) {
 	// Immediately make sure there are stats to show
 	showTimeDiff(0, 0)
 
+}
+
+function syncUp() {
+	if (player) {
+		const state = getPlayerState()
+
+		console.log(timediff)
+
+		// The state given to use by the server is as old as the ping (in ms)
+		state.time += ping / 1000
+
+		setPlayerState(state)
+	}
 }
 
 function getPlayerState() {
