@@ -17,6 +17,7 @@ var actions = 0
 
 var ping = 0
 var timediff = 0
+var lastServerState
 
 async function connectedToRoom(socket, controller) {
 
@@ -84,6 +85,9 @@ async function connectedToRoom(socket, controller) {
 	}, 2000)
 
 	socket.on("beat", state => {
+
+		lastServerState = state
+
 		ping = (new Date() - lastSendBeat) / 2
 		//console.log("Ping:", ping)
 
@@ -100,14 +104,13 @@ async function connectedToRoom(socket, controller) {
 
 function syncUp() {
 	if (player) {
-		const state = getPlayerState()
-
-		console.log(timediff)
+		
+		newstate = lastServerState || getPlayerState()
 
 		// The state given to use by the server is as old as the ping (in ms)
-		state.time += ping / 1000
+		newstate.time += ping / 1000
 
-		setPlayerState(state)
+		setPlayerState(newstate)
 	}
 }
 
