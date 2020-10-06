@@ -34,18 +34,19 @@ function injectChat() {
 				lastMove = new Date()
 			else {
 				visible = true
-/* 				chatDiv.classList.toggle("hidden_") */
+ 				chatDiv.classList.toggle("hidden_")
 			}
 		}
 
-/* 		setInterval(() => {
+		//This makes the UI disappear
+ 		setInterval(() => {
 			if (visible) {
 				if (lastMove.getTime() + 3000 < new Date().getTime()) {
 					visible = false
 					chatDiv.classList.toggle("hidden_")
 				}
 			}
-		}, 100) */
+		}, 100)
 
 		console.log("Injected chat")
 
@@ -146,6 +147,10 @@ function createEventMessage(msg, nick, id) {
 	li.appendChild(content)
 
 	chatUl.appendChild(li)
+
+	//Scroll to bottom
+	chatUl.scrollTop = chatUl.scrollHeight
+
 }
 
 const availableNameColors = [
@@ -198,6 +203,9 @@ function createChatMessage(id, nickname, message) {
 	msg.appendChild(content)
 
 	chatUl.appendChild(msg)
+
+	//Scroll to bottom
+	chatUl.scrollTop = chatUl.scrollHeight
 
 }
 

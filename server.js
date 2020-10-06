@@ -1,5 +1,5 @@
 const io = require("socket.io")()
-const port = 8080
+const port = 7777
 
 const rooms = {}
 let users = 0

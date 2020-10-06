@@ -2,7 +2,7 @@
 
 console.log("connect.js is here")
 
-const serverLocation = "https://syncer.reinfernhout.xyz"
+const serverLocation = "http://localhost:7777"
 
 //Some global variables
 var socket, hash, connected = false, controller = null, nick = "Guest", others = {}, videoID = getVideoID();
