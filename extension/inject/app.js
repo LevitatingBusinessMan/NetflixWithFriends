@@ -18,16 +18,26 @@ var actions = 0
 var ping = 0
 var timediff = 0
 var lastServerState
+var netflix_player
+
+using_netflix = location.hostname == "www.netflix.com"
 
 async function connectedToRoom(socket, controller) {
 
-	//Create chat
-	//if (window.location.hostname == "www.netflix.com")
-		injectChat()
+	console.log("Starting up!")
 
 	if (!player)
-		await waitForPlayer()
+		await waitForPlayer();
 	
+	if (using_netflix) {
+		let s = document.createElement("script");
+		s.src = chrome.extension.getURL("/inject/netflix_player.js");
+		console.log("Injecting netflix_player script");
+		(document.head||document.documentElement).appendChild(s);
+	}
+
+	//Create chat
+	injectChat()
 
 	player.onpause = () => {
 		if (actions < 1)
@@ -72,7 +82,10 @@ async function connectedToRoom(socket, controller) {
 	socket.on("seek", (time, shortID) => {
 		if (shortID == myID)
 			return
-		actions++; player.currentTime = time
+		actions++;
+		if (using_netflix)
+			run_code(`netflix_player.seek(${time * 1000})`)
+		else player.currentTime = time
 	})
 
 
@@ -124,9 +137,22 @@ function getPlayerState() {
 	} 
 }
 
-function setPlayerState(state) {
+async function setPlayerState(state) {
+
+	if (!player)
+		await waitForPlayer()
+
+	console.log("Setting player state")
+
 	actions++
-	player.currentTime = state.time
+
+	//Netflix crashes with the normal api
+	if (using_netflix) {
+		actions++
+		//This currently fails the first time because the netflix_player script isn't injected yet.
+		run_code(`netflix_player.seek(${state.time * 1000})`)
+	}
+	else player.currentTime = state.time
 	
 	if (state.paused != player.paused) {
 		actions++
@@ -152,9 +178,9 @@ function waitForPlayer() {
 			for(let mutation of mutationsList) {
 				if (mutation.target.className = "sizing-wrapper"&& mutation.removedNodes.length) {
 					if (mutation.removedNodes[0].className == "nfp AkiraPlayer") {
-						console.log("Found player!")
 						observer.disconnect()
 						player = document.getElementsByTagName("video")[0]
+						console.log("Found player!", player)
 						resolve(player)
 						break
 					}
@@ -163,4 +189,15 @@ function waitForPlayer() {
 		})
 		observer.observe(document.body, {attributes: false, childList: true, subtree: true});
 	})
+}
+
+//For running code inside the main "window" of the tab
+function run_code(code) {
+	console.log("Running code: ",code)
+	let s = document.createElement("script");
+	s.innerHTML = code;
+	(document.head||document.documentElement).appendChild(s);
+	s.onload = function() {
+		s.remove();
+	};
 }

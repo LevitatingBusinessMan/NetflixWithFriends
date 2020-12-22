@@ -50,8 +50,8 @@ function joinRoom(nick , hash) {
 		//app.js
 		if (members) {
 			connected = true
-			setPlayerState(state)
 			connectedToRoom(socket, controller)
+			setPlayerState(state)
 			//Inform the background/popup of the connection and hash
 			chrome.runtime.sendMessage({message: "status", connected, hash})
 		}

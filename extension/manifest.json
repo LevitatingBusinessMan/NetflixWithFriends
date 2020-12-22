@@ -22,7 +22,8 @@
 		"default_popup": "popup/popup.html"
 	},
 	"web_accessible_resources": [
-        "inject/chat.html"
+		"inject/chat.html",
+		"inject/netflix_player.js"
     ],
 	"manifest_version": 2
 }

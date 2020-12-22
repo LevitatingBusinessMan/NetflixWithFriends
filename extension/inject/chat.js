@@ -2,6 +2,9 @@
 
 //Fetch the HTML and inject it
 function injectChat() {
+
+	console.log("Injecting chat")
+
 	fetch(chrome.extension.getURL('/inject/chat.html'))
 	.then(data => data.text())
 	.then(body => {
@@ -19,7 +22,8 @@ function injectChat() {
 		}
 
 		document.getElementById("usernameInput").placeholder = nick
-		document.getElementById("shareURL").value = location.origin + location.pathname + location.search + "#" + hash
+		if (location.hostname == "www.netflix.com") document.getElementById("shareURL").value = location.origin + location.pathname + "#" + hash
+		else document.getElementById("shareURL").value = location.origin + location.pathname + location.search + "#" + hash
 
 		document.getElementById("shareURL").onclick = function() {
 			this.select()
@@ -48,7 +52,7 @@ function injectChat() {
 			}
 		}, 100)
 
-		console.log("Injected chat")
+		console.log("Injected chat", chatDiv)
 
 		//Start listening for socket events
 		startListening()

@@ -1,3 +1,4 @@
+Fix netflix_player not being loaded before the first sync up
 allowControl
 fix popup frontend (loading animation and stuff)
 get a popup on message
@@ -10,6 +11,7 @@ clean netflix urls
 fix videoID being null (netflix)
 chatUl appendChild undefined (netflix)
 popup shows wrong url (netflix)
+popup should show if connection to socket is good
 
 From test round (netflix):
 lot of .emit of not defined (timing issue)
