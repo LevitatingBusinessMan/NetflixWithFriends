@@ -1,7 +1,9 @@
 //Handles injecting and manipulating the chat.
 
+using_netflix = window.location.hostname == "www.netflix.com"
+
 //Fetch the HTML and inject it
-function injectChat() {
+function injectChat(player) {
 
 	console.log("Injecting chat")
 
@@ -12,7 +14,7 @@ function injectChat() {
 		chatDiv.innerHTML = body
 		chatDiv.id = "chat"
 		
-		if (window.location.hostname == "www.netflix.com") {
+		if (using_netflix) {
 			document.getElementsByClassName("AkiraPlayer")[0].appendChild(chatDiv)
 		}
 
@@ -22,7 +24,7 @@ function injectChat() {
 		}
 
 		document.getElementById("usernameInput").placeholder = nick
-		if (location.hostname == "www.netflix.com") document.getElementById("shareURL").value = location.origin + location.pathname + "#" + hash
+		if (using_netflix) document.getElementById("shareURL").value = location.origin + location.pathname + "#" + hash
 		else document.getElementById("shareURL").value = location.origin + location.pathname + location.search + "#" + hash
 
 		document.getElementById("shareURL").onclick = function() {
@@ -33,13 +35,26 @@ function injectChat() {
 
 		let lastMove = new Date()
 		let visible = true
-		document.body.onmousemove = () => {
+
+		//Here,
+		let controldiv = using_netflix ? document.body : player
+		controldiv.onmousemove = () => {
 			if (visible)
 				lastMove = new Date()
 			else {
 				visible = true
- 				chatDiv.classList.toggle("hidden_")
+ 				chatDiv.classList.remove("hidden_")
 			}
+		}
+
+		player.onmouseleave = () => {
+			visible = false
+			chatDiv.classList.add("hidden_")
+		}
+
+		player.onmouseenter = () => {
+			visible = true
+			chatDiv.classList.remove("hidden_")
 		}
 
 		//This makes the UI disappear
@@ -47,7 +62,7 @@ function injectChat() {
 			if (visible) {
 				if (lastMove.getTime() + 3000 < new Date().getTime()) {
 					visible = false
-					chatDiv.classList.toggle("hidden_")
+					chatDiv.classList.add("hidden_")
 				}
 			}
 		}, 100)

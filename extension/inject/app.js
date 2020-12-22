@@ -37,7 +37,7 @@ async function connectedToRoom(socket, controller) {
 	}
 
 	//Create chat
-	injectChat()
+	injectChat(player)
 
 	player.onpause = () => {
 		if (actions < 1)
