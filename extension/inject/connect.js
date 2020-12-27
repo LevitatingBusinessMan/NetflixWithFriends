@@ -58,7 +58,7 @@ function joinRoom(nick , hash) {
 
 		//Empty room
 		else {
-			console.log("Failed to join", hash)
+			console.log("Failed to join (empty?)", hash)
 			if (location.hostname != "www.youtube.com")
 				location.hash = ""
 			socket.disconnect()

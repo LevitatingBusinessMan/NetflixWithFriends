@@ -1,5 +1,13 @@
-const io = require("socket.io")()
+const server = require('http').createServer();
+const io = require("socket.io")(server, {
+  cors: {
+    origin: ["https://www.youtube.com", "https://www.netflix.com"],
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+})
 const port = 7777
+
 
 const rooms = {}
 let users = 0
@@ -47,8 +55,10 @@ io.on("connection", client => {
 
 	//Client wants to join room
 	client.on("join", (nick, hash, videoID) => {
+
 		//Check if room exists
-		if (!io.sockets.adapter.rooms[hash])
+		//In v3 rooms is a map instead of an object
+		if (!io.sockets.adapter.rooms.get(hash))
 			return client.emit("joined", null)
 		
 		//Check if room was for this videoID
@@ -66,7 +76,8 @@ io.on("connection", client => {
 		client.join(hash)
 		client.room = hash
 
-		const members = Object.keys(io.sockets.adapter.rooms[hash].sockets).length
+		//Sockets is a Set in v3
+		const members = io.sockets.adapter.rooms.get(hash).size
 		
 		//Get controller of room if set
 		const controller = rooms[hash].controller
@@ -136,8 +147,8 @@ io.on("connection", client => {
 		if (client.room) {
 
 			//Extra check if room exists
-			if (io.sockets.adapter.rooms[client.room]) {
-				const members = Object.keys(io.sockets.adapter.rooms[client.room].sockets).length
+			if (io.sockets.adapter.rooms.get(client.room)) {
+				const members = io.sockets.adapter.rooms.get(client.room).size
 				io.to(client.room).emit("member_leave", client.id, client.nick, members)
 			}
 			
@@ -166,7 +177,7 @@ setInterval(() => {
 
 }, 1000)
 
-io.listen(port)
+server.listen(port)
 console.log("Signaling server on", port)
 
 writeStatus(true)

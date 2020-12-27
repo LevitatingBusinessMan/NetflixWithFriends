@@ -36,8 +36,9 @@ function injectChat(player) {
 		let lastMove = new Date()
 		let visible = true
 
-		//Here,
-		let controldiv = using_netflix ? document.body : player
+		//Maybe Youtube is better of mimicking the rest of the ui
+		//let controldiv = using_netflix ? document.body : player
+		let controldiv = document.body
 		controldiv.onmousemove = () => {
 			if (visible)
 				lastMove = new Date()
